@@ -3,12 +3,11 @@ import redis
 
 class RateLimiter:
 
-    def __init__(self, redis_host, redis_port, max_requests, time_window):
+    def __init__(self, redis_host, redis_port, time_window):
         self.redis_client = redis.Redis(host=redis_host, port=redis_port)
-        self.max_requests = max_requests
         self.time_window = time_window
 
-    def is_request_allowed(self, identifier):
+    def is_request_allowed(self, identifier, max_requests):
         current_time = int(time.time())
 
         # Remove expired entries from the sorted set
@@ -17,7 +16,7 @@ class RateLimiter:
         # Get the count of requests within the time window
         request_count = self.redis_client.zcard(identifier)
 
-        if request_count >= self.max_requests:
+        if request_count >= max_requests:
             return False
 
         # Add current timestamp to the sorted set

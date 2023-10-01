@@ -69,32 +69,17 @@ def get_file_type(file_path):
     
 def determine_rate_limit(file_type):
 
-    # values based on industry norms
-    # first element is request limit, second is timeframe in s
+    # values based on industry averages
+    # number is request limit
     file_type_limits = {
-        "Image": [10, 60],
-        "Document": [15, 60],
-        "Code": [15, 60],
-        "Sheet": [5, 60],
-        "Unknown": [5, 60]
+        "Image": 10,
+        "Document": 20,
+        "Code": 15, 
+        "Sheet": 5,
+        "Unknown": 5
     }
 
-    retrieve = file_type_limits.get(file_type, "5 per minute")
-    return retrieve[0], retrieve[1]
-    
-# def request_is_limited(file_type, limit, timeframe):
-#     current_time = int(time.time())
-#     key = f"ratelimit:{file_type}:{request.remote_addr}"
-#     redis_conn.zremrangebyscore(key, '-inf', current_time - timeframe.total_seconds())
-#     request_count = redis_conn.zcard(key)
-
-#     print(request_count, limit)
-
-#     if request_count >= limit:
-#         return True
-#     else:
-#         redis_conn.zadd(key, {current_time: current_time})
-#         return False
+    return file_type_limits.get(file_type, 5)
 
 def smart_categorize(uploaded_file, filetype, past_categories):
 
