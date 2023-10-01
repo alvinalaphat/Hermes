@@ -5,7 +5,6 @@ app = Flask(__name__)
 
 redis_host = 'localhost'
 redis_port = 6379
-max_requests = 50
 time_window = 60  # 60 seconds
 
 limiter = RateLimiter(redis_host, redis_port, time_window)
@@ -37,12 +36,12 @@ def download_file(file_name):
 
     identifier = get_remote_address()  # Identify by IP address
     if limiter.is_request_allowed(identifier, limit):
-        return "Too many requests. Please try again later.", 429  # HTTP status code 429 indicates Too Many Requests
-    else:
         THIS_FOLDER = Path(__file__).parent.resolve()
         file_path = THIS_FOLDER / f"files/{file_name}"
         return send_file(file_path, as_attachment=True)
-
+    else:
+        return "Too many requests. Please try again later.", 429  # HTTP status code 429 indicates Too Many Requests
+        
 @app.route('/', methods=['GET', 'POST'])
 def upload():
 
