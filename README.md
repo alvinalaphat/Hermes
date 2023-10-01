@@ -1,5 +1,5 @@
 # Hermes
-### File server with smart categorization and rate limiting
+#### File server with smart categorization and rate limiting
 
 ## Instructions
 
@@ -8,3 +8,5 @@
 3. source env/bin/activate
 4. pip install -r requirements.txt
 5. python3 main.py
+
+Note: you'll need your own API Keys for main.py
