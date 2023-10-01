@@ -1,5 +1,7 @@
 # Hermes
-### File server with smart categorization and rate limiting
+#### File server with smart categorization and rate limiting
+
+Note: you'll need your own API Keys
 
 ## Instructions
 
