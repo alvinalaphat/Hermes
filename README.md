@@ -9,4 +9,4 @@
 4. pip install -r requirements.txt
 5. python3 main.py
 
-Note: you'll need your own API Keys
+Note: you'll need your own API Keys for main.py
