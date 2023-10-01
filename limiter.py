@@ -15,7 +15,6 @@ class RateLimiter:
 
         # Get the count of requests within the time window
         request_count = self.redis_client.zcard(identifier)
-        print(request_count, max_requests)
 
         if request_count >= max_requests:
             return False

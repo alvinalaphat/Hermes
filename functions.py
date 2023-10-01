@@ -72,14 +72,14 @@ def determine_rate_limit(file_type):
     # values based on industry averages
     # number is request limit
     file_type_limits = {
-        "Image": 10,
-        "Document": 20,
-        "Code": 15, 
+        "Image": 5,
+        "Document": 10,
+        "Code": 20, 
         "Sheet": 5,
-        "Unknown": 5
+        "Unknown": 2
     }
 
-    return file_type_limits.get(file_type, 5)
+    return file_type_limits.get(file_type, 2)
 
 def smart_categorize(uploaded_file, filetype, past_categories):
 
