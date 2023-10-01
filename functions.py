@@ -31,7 +31,6 @@ load_dotenv()
 
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 MONGODB_URI = os.getenv("MONGODB_URI")
-redis_conn = redis.Redis(host='localhost', port=6379, db=0)
 
 client = pymongo.MongoClient(MONGODB_URI, connectTimeoutMS=None, socketTimeoutMS=None, connect=True)
 db = client['Cluster0']
@@ -83,14 +82,19 @@ def determine_rate_limit(file_type):
     retrieve = file_type_limits.get(file_type, "5 per minute")
     return retrieve[0], retrieve[1]
     
-def request_is_limited(redis_key: str, redis_limit: int, redis_period: timedelta):
-    if redis_conn.setnx(redis_key, redis_limit):
-        redis_conn.expire(redis_key, int(redis_period.total_seconds()))
-    bucket_val = redis_conn.get(redis_key)
-    if bucket_val and int(bucket_val) > 0:
-        redis_conn.decrby(redis_key, 1)
-        return False
-    return True
+# def request_is_limited(file_type, limit, timeframe):
+#     current_time = int(time.time())
+#     key = f"ratelimit:{file_type}:{request.remote_addr}"
+#     redis_conn.zremrangebyscore(key, '-inf', current_time - timeframe.total_seconds())
+#     request_count = redis_conn.zcard(key)
+
+#     print(request_count, limit)
+
+#     if request_count >= limit:
+#         return True
+#     else:
+#         redis_conn.zadd(key, {current_time: current_time})
+#         return False
 
 def smart_categorize(uploaded_file, filetype, past_categories):
 

@@ -1,10 +1,18 @@
 from functions import *
+from limiter import RateLimiter
 
 app = Flask(__name__)
 
 # Use IP address for rate limiting for extra protection
 # Using Redis for rate limiting by file type
-limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["50 per minute"])  
+# limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["50 per minute"])  
+
+redis_host = 'localhost'
+redis_port = 6379
+max_requests = 50
+time_window = 60  # 60 seconds
+
+limiter = RateLimiter(redis_host, redis_port, max_requests, time_window)
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -31,7 +39,8 @@ def download_file(file_name):
         print(e)
         limit, timeframe = 5, 60  # Default rate limit and timeframe if file type is unknown or an error occurs
 
-    if request_is_limited(file_type, limit, timedelta(seconds=timeframe)):
+    identifier = get_remote_address()  # Replace with your identifier (e.g., user ID or IP address)
+    if limiter.is_request_allowed(identifier):
         return "Too many requests. Please try again later.", 429  # HTTP status code 429 indicates Too Many Requests
     else:
         THIS_FOLDER = Path(__file__).parent.resolve()

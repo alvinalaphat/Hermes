@@ -1,0 +1,10 @@
+prefix=/Users/runner/work/pylibmagic/pylibmagic/_skbuild/macosx-10.9-x86_64-3.11/cmake-build/libmagic
+exec_prefix=${prefix}
+libdir=/Users/runner/work/pylibmagic/pylibmagic/_skbuild/macosx-10.9-x86_64-3.11/cmake-build/libmagic/lib
+includedir=${prefix}/include
+
+Name: libmagic
+Description: Magic number recognition library
+Version: 5.41
+Libs: -L${libdir} -lmagic
+Libs.private: -lbz2 -lz 
