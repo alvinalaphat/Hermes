@@ -83,8 +83,6 @@ def determine_rate_limit(file_type):
     retrieve = file_type_limits.get(file_type, "5 per minute")
     return retrieve[0], retrieve[1]
     
-# def request_is_limited(file_type, limit, timeframe):
-
 def request_is_limited(redis_key: str, redis_limit: int, redis_period: timedelta):
     if redis_conn.setnx(redis_key, redis_limit):
         redis_conn.expire(redis_key, int(redis_period.total_seconds()))
