@@ -1,0 +1,153 @@
+.bubble {
+    animation: expand .75s ease-in-out infinite;
+    border-radius: 20px;
+    display: inline-block;
+    transform-origin: center center;
+    margin: 0 3px;
+    width: 20px;
+    height: 20px;
+}
+
+.bubble:nth-child(1) {
+    background: #2980b9;
+}
+
+.bubble:nth-child(2) {
+    animation-delay: 360ms;
+    background: #2980b9;
+}
+
+.bubble:nth-child(3) {
+    animation-delay: 540ms;
+    background: #2980b9;
+}
+
+@keyframes expand {
+0% {
+    transform: scale(1);
+}
+25% {
+    transform: scale(1.55);
+}
+}
+
+.loader {
+    top: 50%;
+    left: 50%;
+}
+
+.submit-btn {
+    display: block;
+    margin: 0 auto;
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: black;
+    cursor: pointer;
+    color: white;
+    border: 2px solid rgb(186, 143, 86);
+}
+
+h4 {
+    font-weight: 700;
+}
+
+.form-container {
+    width: 800px;
+    height: 700px;
+    overflow: auto;
+    margin: 0 auto;
+    margin-top: 25px;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    padding: 40px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.584);
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.form-container input[type="submit"] {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+#upload-list {
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 100px;
+    padding: 5px;
+    list-style-type: none;
+    overflow: auto;
+    display: block;
+}
+
+#file-list {
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 200px;
+    padding: 5px;
+    list-style-type: none;
+    overflow: auto;
+    display: block;
+}
+
+li {
+    border: 0.5px solid black;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.custom-file-button {
+    color: white;
+}
+
+#upload-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#upload-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0.5px solid black;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 5px;
+}
+
+#file-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#file-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0.5px solid black;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.file-item {
+    flex-grow: 1;
+}
+
+.delete-file-btn {
+    cursor: pointer;
+}
+
+body {
+    background-color: rgba(210, 180, 140, 0.382);
+}

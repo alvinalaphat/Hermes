@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    
+  <head>
+    <title>File Portal | Hermes</title>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="./static/styles.css">
+    <link rel="icon" type="image/x-icon" href="./static/favicon.ico">
+
+    </head>
+        
+        <body>
+
+            <div>
+                <div class="form-container">
+
+                    <form action="/" method="post" id="upload-form" enctype="multipart/form-data">
+                        <div>
+                            <div id="content">
+                                <h4>Upload Your Files</h4>
+
+                                <br>
+
+                                <div style="display: flex;">
+                                    <label>Accepts Docs, Images, or Code &nbsp;&nbsp;</label>
+
+                                    <!-- this holds the final list of files to upload when we submit -->
+                                    <!-- reason we need this is so we can keep uploading or deleting as much as we want till we save -->
+                                    <input type="file" name="content[]" id="hidden-content" style="display: none;">
+
+                                    <!-- upload files with this input -->
+                                    <input type="file" class="custom-file-button" id="file-input" name="existing[]" accept=".txt, .docx, .pdf, .gif, .xlsx, .png, .jpeg, .jpg, .html, .py, .c, .cpp, .js" multiple>
+                                
+                                </div>
+                                <br>
+
+                                <!-- container for files to upload -->
+                                <div id="upload-list">
+                                    <ul style="display: block;">
+                                    </ul>
+                                </div>
+
+                                <br><br>
+
+                                <div style="display: flex; font-weight: 600;">
+                                    <label style="color: red;"> Smart Category &nbsp;</label><label> / File Name — Category</label> 
+                                </div>
+
+                                <!-- populate files by smart category group -->
+                                <div id="file-list">
+                                    <ul style="display: block;">
+
+                                        {% for group in uploaded_files %}
+                                            
+                                            {% if group.files %}
+                                                <h5 style="color: red;">{{ group._id }}</h5>
+                                            {% endif %}
+                                            {% for file in group.files %}
+                                                <li name="{{file}}">
+                                                    <div class="file-item" name="{{file}}">
+                                                        <a href="/download/{{ file.name }}"><i class="fa fa-download"></i></a>
+                                                        <span>{{ file.name }} — {{ file.category }}</span>
+                                                    </div>
+
+                                                    <i class="fa fa-trash delete-file-btn" data-filename="{{ file }}"></i>
+                                                </li>
+                                            {% endfor %}
+                                        {% endfor %}
+
+                                        
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    <br><br>
+
+                    <input type="submit" class="submit-btn" id="submit-btn" value="Save Changes">
+                    
+                    <!-- animated loading -->
+                    <div class="loader w3-center" id="loading-btn" style="display: none;">
+                        <div class="bubble"></div>
+                        <div class="bubble"></div>
+                        <div class="bubble"></div>
+                    </div>
+
+                    <!-- this holds the files we need to delete -->
+                    <input type="hidden" id="delete" name="delete" style="display: none;">
+                    </form>
+              </div>
+            </div>
+
+            <script>
+
+            // declared variables
+            const form = document.getElementById('upload-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const loadingBtn = document.getElementById('loading-btn');
+            const deleteInput = document.getElementById('delete');
+            const fileInput = document.getElementById('file-input');
+            var hiddenContentInput = document.getElementById('hidden-content');
+            const downloadButton = document.getElementById('download-button');
+            const fileList = document.getElementById('file-list');
+            const uploadList = document.getElementById('upload-list');
+            var finalList = new DataTransfer();
+            const toDelete = []
+            const fileNames = [];
+
+            // submit button
+            form.addEventListener('submit', function(e) {
+                deleteInput.value = toDelete;
+                submitBtn.style.display = 'none';
+                loadingBtn.style.display = 'block';
+            });
+
+            // remove file from list with delete button
+            const deleteButtons = document.querySelectorAll('.delete-file-btn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    toDelete.push(this.parentElement.textContent.trim());
+                    this.parentElement.remove();
+                });
+            });
+
+            // shortform for filetypes
+            const fileTypeMappings = {
+                'image/jpeg': 'Image',
+                'image/jpg': 'Image',
+                'image/png': 'Image',
+                'image/gif': 'Image',
+                'application/msword': 'Document',
+                'application/pdf': 'Document',
+                'text/plain': 'Document',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Document',
+                'text/html': 'Code',
+                'text/x-python-script': 'Code',
+                'text/javascript': 'Code',
+                'text/css': 'Code',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Sheet',
+                'text/csv': 'Sheet',
+            };
+
+            // uploading files into portal
+            fileInput.addEventListener('change', function () {
+                const files = fileInput.files;
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const listItem = document.createElement('li');
+                    const fileType = file.type;
+
+                    // no duplicate files get added
+                    if (!fileNames.includes(file.name)) {
+
+                        // add file to final list of files to submit
+                        finalList.items.add(file);
+
+                        // convert filetype into shortform
+                        const shortFileType = fileTypeMappings[fileType] || 'Unknown';
+                        if (fileType) {
+                            listItem.textContent = file.name + ' — ' + shortFileType;
+                        } else {
+                            listItem.textContent = file.name + ' — ' + 'Unknown';
+                        }
+
+                        // add the delete button to each list element
+                        const iconElement = document.createElement('i');
+                        iconElement.classList.add('fa', 'fa-trash', 'delete-file-btn');
+                        
+                        iconElement.addEventListener('click', function () {
+                            this.parentElement.remove();
+                        });
+
+                        listItem.appendChild(iconElement);
+
+                        // add files to upload and unique file  list
+                        uploadList.appendChild(listItem);
+                        fileNames.push(file.name);
+                    }
+                }
+
+                // Set the value of the hidden content[] input to a comma-separated list of file names
+                hiddenContentInput.files = finalList.files;
+            });
+
+            </script>
+        </body>
+</html>
