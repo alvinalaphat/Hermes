@@ -27,20 +27,23 @@ def ratelimit_handler(e):
 
 @app.route('/download/<string:file_name>')
 def download_file(file_name):
+    
+    file_type = get_file_type(file_name)  # Implement this function to extract file type from file_name
+
     try:
-        file_type = get_file_type(file_name)  # Implement this function to extract file type from file_name
         limit = determine_rate_limit(file_type)
     except Exception as e:
         print(e)
         limit = 5 # Default rate limit if file type is unknown or an error occurs
 
-    identifier = get_remote_address()  # Identify by IP address
+    identifier = get_remote_address()+file_type  # Identify by IP address and filetype
+    time.sleep(2)
     if limiter.is_request_allowed(identifier, limit):
         THIS_FOLDER = Path(__file__).parent.resolve()
         file_path = THIS_FOLDER / f"files/{file_name}"
         return send_file(file_path, as_attachment=True)
     else:
-        return "Too many requests. Please try again later.", 429  # HTTP status code 429 indicates Too Many Requests
+        return error_response(429, '"You have exceeded your rate-limit"')  # HTTP status code 429 indicates Too Many Requests
         
 @app.route('/', methods=['GET', 'POST'])
 def upload():

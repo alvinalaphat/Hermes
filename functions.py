@@ -27,6 +27,8 @@ from redis import Redis
 from llama_index import SimpleDirectoryReader
 from main import app
 
+# docker run -p 6379:6379 -it redis/redis-stack:latest
+
 load_dotenv()
 
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
